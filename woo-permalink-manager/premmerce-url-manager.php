@@ -20,7 +20,6 @@ use Premmerce\UrlManager\UrlManagerPlugin;
  * Text Domain: premmerce-url-manager
  * Domain Path: /languages
  *
- * Tested up to: 6.1
  * WC requires at least: 3.6.0
  * WC tested up to: 8.3.1
  */
