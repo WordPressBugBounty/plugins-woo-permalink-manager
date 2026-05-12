@@ -133,6 +133,7 @@ class Admin
      */
     public function getSettingLink()
     {
+        
         $param = array('page' => 'premmerce-url-manager-admin' );
         return esc_url(add_query_arg($param, get_admin_url() . 'admin.php'));
     }
@@ -152,6 +153,7 @@ class Admin
      */
     public function ignoreAdminBanner()
     {
+
         $user    = wp_get_current_user();
         $user_id = $user->ID;
 
@@ -355,5 +357,6 @@ class Admin
         $user_id = $user->ID;
 
         return ! get_user_meta($user_id, self::META_IGNORE_BANNER, true);
+
     }
 }

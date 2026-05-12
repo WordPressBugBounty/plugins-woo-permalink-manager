@@ -17,29 +17,29 @@ class YoastBreadcrumbsAddon extends BreadcrumbsAddon
         return false;
     }
 
-  /**
-   * Init reformat breadcrumbs
-   */
+    /**
+     * Init reformat breadcrumbs
+     */
     public function init()
     {
         add_filter('wpseo_breadcrumb_links', array( $this, 'createBreadcrumbs' ), 999);
     }
 
-  /**
-   * Get breadcrumbs
-   *
-   * @return array
-   */
+    /**
+     * Get breadcrumbs
+     *
+     * @return array
+     */
     public function getBreadcrumbs()
     {
         return array_map(array( $this, 'reformatBreadcrumbs' ), $this->breadcrumbs);
     }
 
-  /**
-   * Reformat breadcrumbs
-   *
-   * @return array
-   */
+    /**
+     * Reformat breadcrumbs
+     *
+     * @return array
+     */
     protected function reformatBreadcrumbs($arr)
     {
         return array(

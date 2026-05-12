@@ -1,10 +1,11 @@
+
 === Premmerce Permalink Manager for WooCommerce ===
 
 Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
 Tested up to: 6.9
-Stable tag: 2.3.11
+Stable tag: 2.3.12
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -87,6 +88,10 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.3.12 (11th May 2026) =
+
+* Security: Freemius SDK updated to 2.13.1
 
 = 2.3.11 (21st February 2024) =
 

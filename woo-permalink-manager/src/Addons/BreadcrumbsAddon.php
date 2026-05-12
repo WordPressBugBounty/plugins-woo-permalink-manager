@@ -27,11 +27,11 @@ class BreadcrumbsAddon implements AddonInterface
         $this->options = $options;
     }
 
-  /**
-   * Is active
-   *
-   * @return boolean
-   */
+    /**
+     * Is active
+     *
+     * @return boolean
+     */
     public function isActive()
     {
         include_once  ABSPATH . 'wp-admin/includes/plugin.php' ;
@@ -42,21 +42,21 @@ class BreadcrumbsAddon implements AddonInterface
         return false;
     }
 
-  /**
-   * Init reformat breadcrumbs
-   */
+    /**
+     * Init reformat breadcrumbs
+     */
     public function init()
     {
         add_filter('woocommerce_get_breadcrumb', array( $this, 'createBreadcrumbs' ), 999);
     }
 
-  /**
-   * Init reformat breadcrumbs
-   *
-   * @param array $crumbs
-   *
-   * @return array|void
-   */
+    /**
+     * Init reformat breadcrumbs
+     *
+     * @param array $crumbs
+     *
+     * @return array|void
+     */
     public function createBreadcrumbs($crumbs)
     {
         if (! is_product() && ! is_product_category()) {
@@ -78,9 +78,9 @@ class BreadcrumbsAddon implements AddonInterface
                     $post->ID,
                     'product_cat',
                     array(
-                        'orderby' => 'parent',
-                        'order'   => 'DESC',
-                  )
+                          'orderby' => 'parent',
+                          'order'   => 'DESC',
+                    )
                 );
 
                 if ($terms) {
@@ -95,8 +95,11 @@ class BreadcrumbsAddon implements AddonInterface
 
                 $this->addCrumb(get_the_title($post), get_permalink($post));
             }
+
         } elseif (is_product_category()) {
+
             if (! empty($this->options['category'])) {
+
                 $currentTerm = $GLOBALS['wp_query']->get_queried_object();
 
                 if ('hierarchical' === $this->options['category']) {
@@ -114,22 +117,22 @@ class BreadcrumbsAddon implements AddonInterface
         return $crumbs;
     }
 
-  /**
-   * Get breadcrumbs
-   *
-   * @return array
-   */
+    /**
+     * Get breadcrumbs
+     *
+     * @return array
+     */
     protected function getBreadcrumbs()
     {
         return $this->breadcrumbs;
     }
 
-  /**
-   * Add crumbs for a term
-   *
-   * @param int $termId Term ID
-   * @param string $taxonomy Taxonomy
-   */
+    /**
+     * Add crumbs for a term
+     *
+     * @param int $termId Term ID
+     * @param string $taxonomy Taxonomy
+     */
     protected function addCrumbAncestors($termId, $taxonomy)
     {
         $ancestors = get_ancestors($termId, $taxonomy);
@@ -144,12 +147,12 @@ class BreadcrumbsAddon implements AddonInterface
         }
     }
 
-  /**
-   * Add a crumb
-   *
-   * @param string $name Name
-   * @param string $link Link
-   */
+    /**
+     * Add a crumb
+     *
+     * @param string $name Name
+     * @param string $link Link
+     */
     protected function addCrumb($name, $link = '')
     {
         $this->breadcrumbs[] = array(

@@ -57,6 +57,7 @@ class UrlManagerPlugin
      */
     public static function getPluginVersion()
     {
+        
         if (defined('self::VERSION')) {
             return self::VERSION;
         }
@@ -80,7 +81,7 @@ class UrlManagerPlugin
     public function run()
     {
         $valid = count($this->validateRequiredPlugins()) === 0;
-        ( new Updater() )->update();
+        (new Updater())->update();
 
         if (is_admin()) {
             new Admin($this->fileManager);
@@ -90,8 +91,8 @@ class UrlManagerPlugin
             if (! is_admin()) {
                 new Frontend();
             }
-            ( new PermalinkListener() )->registerFilters();
-            ( new AddonManager() )->initAddons();
+            (new PermalinkListener())->registerFilters();
+            (new AddonManager())->initAddons();
         }
     }
 
@@ -157,6 +158,7 @@ class UrlManagerPlugin
                 $this->notifier->push($error, AdminNotifier::ERROR, false);
             }
         }
+
     }
 
     /**
@@ -166,6 +168,7 @@ class UrlManagerPlugin
      */
     private function validateRequiredPlugins()
     {
+
         $plugins = array();
 
         if (! function_exists('is_plugin_active')) {

@@ -42,6 +42,7 @@ class Updater
 
     public function update2_0()
     {
+
         $options   = get_option('premmerce_url_manager_options', array());
         $options12 = array(
             'use_primary_category' => 'on',
@@ -65,6 +66,7 @@ class Updater
             $options12['category'] = 'hierarchical';
             if (! empty($options['remove_category_parent_slugs'])) {
                 $options12['category'] = 'slug';
+
             }
         }
 

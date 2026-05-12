@@ -175,6 +175,7 @@ class Settings
      */
     private function fixWPWCSettings($options)
     {
+
         if (isset($options['product']) && !empty($options['product']) || isset($options['category']) && !empty($options['category'])) {
             if (! get_option('permalink_structure')) {
                 update_option('permalink_structure', self::PERMALINK_STRUCTURE);
@@ -182,6 +183,7 @@ class Settings
         }
 
         if (isset($options['product']) && !empty($options['product'])) {
+
             if ('slug' === $options['product']) {
                 $wc['product_base'] = self::PERMALINK_WC_PRODUCT;
             }
@@ -203,6 +205,7 @@ class Settings
      */
     public function getOption($key, $default = null)
     {
+
         if (! isset($this->options)) {
             $this->options = get_option(self::OPTIONS);
         }

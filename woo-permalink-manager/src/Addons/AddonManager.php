@@ -15,9 +15,9 @@ class AddonManager
         );
     }
 
-  /**
-   * Init Addons
-   */
+    /**
+     * Init Addons
+     */
     public function initAddons()
     {
         foreach ($this->getAddons() as $addon) {
