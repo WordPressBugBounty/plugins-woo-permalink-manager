@@ -5,7 +5,7 @@ Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
 Tested up to: 7.1
-Stable tag: 2.3.14
+Stable tag: 2.3.16
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -87,6 +87,15 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.3.16 (24th September 2026) =
+
+* Security Fix: XSS on the pricing page via an outdated Freemius pricing script (Thanks to Nguyen Ba Khanh - HPT Vietnam Corporation via Patchstack for the report)
+* Fix: The permalink suffix setting is sanitised when saved
+
+= 2.3.15 (24th September 2026) =
+
+* Fix: The settings page shows your saved settings again. In 2.3.14 it showed every option as unset, and saving the page reset your permalink settings
 
 = 2.3.14 (24th September 2026) =
 

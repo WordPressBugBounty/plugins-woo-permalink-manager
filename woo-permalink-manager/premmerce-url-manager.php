@@ -11,7 +11,7 @@ use Premmerce\UrlManager\UrlManagerPlugin;
  * Plugin Name: Premmerce Permalink Manager for WooCommerce
  * Plugin URI:  https://premmerce.com/woocommerce-permalink-manager-remove-shop-product-product-category-url/
  * Description: Premmerce Permalink Manager for WooCommerce allows you to change WooCommerce permalink and remove product and product_category slugs from the URL.
- * Version:     2.3.14
+ * Version:     2.3.16
  * 
  * Author:      Premmerce
  * Author URI:  https://premmerce.com/

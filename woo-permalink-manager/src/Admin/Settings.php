@@ -19,11 +19,11 @@ class Settings
     const PERMALINK_WC_PRODUCT = 'product';
 
     /**
-     * Stores the options retrieved from the database.
+     * Stores the options retrieved from the database. Null until getOption() loads them.
      *
-     * @var array
+     * @var array|null
      */
-    private $options = array();
+    private $options;
 
     /**
      * FileManager
@@ -167,8 +167,18 @@ class Settings
     {
         $this->fixWPWCSettings($settings);
 
+        if (! is_array($settings)) {
+            return $settings;
+        }
+
+        foreach ($settings as $key => $value) {
+            if (is_scalar($value)) {
+                $settings[ $key ] = sanitize_text_field($value);
+            }
+        }
+
         if (! empty($settings['suffix'])) {
-            esc_url_raw($settings['suffix']);
+            $settings['suffix'] = preg_replace('~[^A-Za-z0-9._/-]~', '', $settings['suffix']);
         }
 
         return $settings;
