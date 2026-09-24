@@ -4,8 +4,8 @@
 Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
-Tested up to: 6.9
-Stable tag: 2.3.13
+Tested up to: 7.1
+Stable tag: 2.3.14
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -51,11 +51,10 @@ You can see how it works on the SalesZone theme here: <https://saleszone.premmer
 Plus, you can create your personal demo store and test this plugin together with [Premmerce Premium](https://premmerce.com/features/)
 and all other Premmerce plugins and themes developed by our team here: [Premmerce WooCommerce Demo](https://premmerce.com/premmerce-woocommerce-demo/).
 
-= This plugin is 100% compatible with =
+= Works with =
 
 * base WooCommerce functionality
-* Yoast SEO
-* WPML WooCommerce Multilingual
+* Yoast SEO (primary category and breadcrumbs)
 * all the Premmerce plugins
 
 == Screenshots ==
@@ -88,6 +87,12 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.3.14 (24th September 2026) =
+
+* Fix: Object caches such as Redis are no longer emptied every time permalinks are rebuilt
+* Fix: PHP 8.1+ deprecation notices
+* Update: Tested up to WordPress 7.1 and WooCommerce 11.1.2
 
 = 2.3.13 (12th May 2026) =
 

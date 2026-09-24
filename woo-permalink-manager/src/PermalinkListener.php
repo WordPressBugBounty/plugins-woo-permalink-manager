@@ -121,7 +121,6 @@ class PermalinkListener {
         if ( empty( $this->taxonomyOptions ) ) {
             return $rules;
         }
-        wp_cache_flush();
         global $wp_rewrite;
         $feed = '(' . trim( implode( '|', $wp_rewrite->feeds ) ) . ')';
         $customRules = array();

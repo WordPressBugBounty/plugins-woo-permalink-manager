@@ -89,6 +89,9 @@ class Frontend {
                 $replace['amp'] = $slug;
                 $slug = array_pop( $url );
             }
+            if ( !$slug ) {
+                $slug = '';
+            }
             $commentsPosition = strpos( $slug, 'comment-page-' );
             if ( 0 === $commentsPosition ) {
                 $replace['cpage'] = substr( $slug, strlen( 'comment-page-' ) );

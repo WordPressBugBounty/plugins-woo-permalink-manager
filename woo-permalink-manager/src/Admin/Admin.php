@@ -229,8 +229,6 @@ class Admin
      */
     public function options()
     {
-        $this->triggerFlush();
-
         $current = isset($_GET['tab']) ? sanitize_file_name(wp_unslash($_GET['tab'])) : 'settings';
 
         $tabs['settings'] = __('Settings', 'premmerce-url-manager');
@@ -317,6 +315,7 @@ class Admin
     {
         if (get_option(Settings::OPTION_FLUSH)) {
             flush_rewrite_rules();
+            wp_cache_flush();
             delete_option(Settings::OPTION_FLUSH);
         }
     }

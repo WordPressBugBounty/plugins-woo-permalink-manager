@@ -19,6 +19,13 @@ class Settings
     const PERMALINK_WC_PRODUCT = 'product';
 
     /**
+     * Stores the options retrieved from the database.
+     *
+     * @var array
+     */
+    private $options = array();
+
+    /**
      * FileManager
      *
      * @var FileManager
