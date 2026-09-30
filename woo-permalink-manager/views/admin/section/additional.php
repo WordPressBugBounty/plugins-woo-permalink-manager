@@ -121,6 +121,24 @@ if ( premmerce_wpm_fs()->can_use_premium_code() ) {
 				</p>
 			</th>
 		</tr>
-
+		<tr>
+			<th>
+				<label class="premium-only-label">
+					<input <?php echo $free ? 'disabled' : ''; ?> type="checkbox"
+						name="<?php echo esc_attr(Settings::OPTIONS); ?>[include_shop]"
+						<?php checked( 'on', $include_shop ); ?>>
+					<?php esc_html_e( 'Include Shop', 'premmerce-url-manager' ); ?>
+				</label>
+				<p class="description">
+					<span class="premium-only-feature">
+						<a class="premium-only-feature-link"
+							href="<?php echo esc_url(admin_url('admin.php?page=premmerce-url-manager-admin-pricing')); ?>">
+							<?php esc_html_e( 'Available only in premium version', 'premmerce-url-manager' ); ?>
+						</a>
+					</span>
+					<?php esc_html_e( 'Prepend "/shop/" in permalinks', 'premmerce-url-manager' ); ?>
+				</p>
+			</th>
+		</tr>
 	</tbody>
 </table>

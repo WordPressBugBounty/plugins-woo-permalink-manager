@@ -77,10 +77,21 @@ class Frontend {
             return $request;
         }
         $url = $wp->request;
+        // Leave REST API requests alone (#46), whatever the REST prefix: WordPress has
+        // already routed them, and a route ending in a product slug isn't a product.
+        if ( isset( $request['rest_route'] ) ) {
+            return $request;
+        }
         if ( !empty( $url ) ) {
             $url = explode( '/', $url );
             $slug = array_pop( $url );
-            $replace = array();
+            // Keep the query vars that didn't come from the path WordPress matched, such as
+            // public ones in the query string (#5: an affiliate plugin's ?ref=). Drop the ones
+            // that did (e.g. pagename from the page rule), and WordPress's 404 flag.
+            parse_str( (string) $wp->matched_query, $matchedVars );
+            $replace = array_diff_key( $request, $matchedVars, array(
+                'error' => '',
+            ) );
             if ( 'feed' === $slug ) {
                 $replace['feed'] = $slug;
                 $slug = array_pop( $url );

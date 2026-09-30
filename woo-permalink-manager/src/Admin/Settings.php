@@ -143,6 +143,7 @@ class Settings
             'use_primary_category' => $this->getOption('use_primary_category'),
             'breadcrumbs'          => $this->getOption('breadcrumbs'),
             'br_remove_shop'       => $this->getOption('br_remove_shop'),
+            'include_shop'         => $this->getOption('include_shop'),
         ));
     }
 

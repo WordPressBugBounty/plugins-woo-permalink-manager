@@ -112,8 +112,9 @@ class UrlManagerPlugin
             if (! is_admin()) {
                 new Frontend();
             }
-            (new PermalinkListener())->registerFilters();
-            (new AddonManager())->initAddons();
+            $permalinkListener = new PermalinkListener();
+            $permalinkListener->registerFilters();
+            (new AddonManager())->initAddons($permalinkListener);
         }
     }
 

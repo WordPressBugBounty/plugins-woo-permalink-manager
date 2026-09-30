@@ -1,6 +1,7 @@
 <?php namespace Premmerce\UrlManager\Addons;
 
 use Premmerce\UrlManager\Admin\Settings;
+use Premmerce\UrlManager\PermalinkListener;
 
 class BreadcrumbsAddon implements AddonInterface
 {
@@ -19,12 +20,23 @@ class BreadcrumbsAddon implements AddonInterface
     protected $options = array();
 
     /**
-     * Constructor
+     * Picks the product's category, the same way as for its URL
+     *
+     * @var PermalinkListener
      */
-    public function __construct()
+    protected $permalinkListener;
+
+    /**
+     * Constructor
+     *
+     * @param PermalinkListener|null $permalinkListener The one that builds product URLs.
+     */
+    public function __construct($permalinkListener = null)
     {
         $options       = get_option(Settings::OPTIONS);
         $this->options = $options;
+
+        $this->permalinkListener = $permalinkListener instanceof PermalinkListener ? $permalinkListener : new PermalinkListener();
     }
 
     /**
@@ -63,6 +75,9 @@ class BreadcrumbsAddon implements AddonInterface
             return $crumbs;
         }
 
+        // Start afresh: the trail can be built more than once on a page.
+        $this->breadcrumbs = array();
+
         $this->addCrumb(apply_filters('premmerce_permalink_home_breadcrumb_default', __('Home', 'premmerce-url-manager')), get_home_url());
 
         if (empty($this->options['br_remove_shop'])) {
@@ -72,19 +87,13 @@ class BreadcrumbsAddon implements AddonInterface
 
         if (is_product()) {
             if (! empty($this->options['product'])) {
-                global $post;
+                $post = get_queried_object();
 
-                $terms = wc_get_product_terms(
-                    $post->ID,
-                    'product_cat',
-                    array(
-                          'orderby' => 'parent',
-                          'order'   => 'DESC',
-                    )
-                );
+                // The category the product's URL uses: Yoast's primary category when that
+                // option is on, so the trail matches the URL.
+                $mainTerm = $this->permalinkListener->getProductCategory($post);
 
-                if ($terms) {
-                    $mainTerm = $terms[0];
+                if ($mainTerm) {
                     if ('category_slug' === $this->options['product']) {
                         $this->addCrumb($mainTerm->name, get_term_link($mainTerm));
                     } elseif ('hierarchical' === $this->options['product']) {

@@ -28,6 +28,14 @@ class PermalinkListener {
     private $polyLang = null;
 
     public function __construct() {
+        $this->loadOptions();
+    }
+
+    /**
+     * Read the plugin's settings. Called again when they're saved, so the rewrite rules
+     * flushed at the end of that request are built from the new settings.
+     */
+    public function loadOptions() {
         $options = get_option( Settings::OPTIONS );
         $this->options = array(
             'use_primary_category'     => !empty( $options['use_primary_category'] ),
@@ -36,6 +44,7 @@ class PermalinkListener {
             'enable_suffix_categories' => ( isset( $options['enable_suffix_categories'] ) && !empty( $options['enable_suffix_categories'] ) ? true : false ),
             'enable_suffix_products'   => ( isset( $options['enable_suffix_products'] ) && !empty( $options['enable_suffix_products'] ) ? true : false ),
             'sku'                      => ( isset( $options['sku'] ) ? $options['sku'] : '' ),
+            'include_shop'             => false,
         );
         $this->taxonomyOptions['product_cat'] = ( isset( $options['category'] ) ? $options['category'] : '' );
     }
@@ -57,6 +66,8 @@ class PermalinkListener {
             3
         );
         add_filter( 'rewrite_rules_array', array($this, 'addRewriteRules'), 99 );
+        add_action( 'add_option_' . Settings::OPTIONS, array($this, 'loadOptions') );
+        add_action( 'update_option_' . Settings::OPTIONS, array($this, 'loadOptions') );
         add_action( 'pll_init', function ( $polylang ) {
             $this->polyLang = $polylang;
         } );
@@ -79,6 +90,10 @@ class PermalinkListener {
         $suffix = ( $suffix ? $suffix : false );
         $isHierarchical = $this->isHierarchical( $this->taxonomyOptions[$taxonomy] );
         $path = $this->buildTermPath( $term, $isHierarchical, $suffix );
+        $shopBase = $this->getShopBase();
+        if ( $shopBase ) {
+            $path = $shopBase . '/' . $path;
+        }
         return ( $suffix ? home_url( $path ) : home_url( user_trailingslashit( $path ) ) );
     }
 
@@ -104,9 +119,15 @@ class PermalinkListener {
         if ( strpos( $product_base, '%product_cat%' ) !== false ) {
             $product_base = str_replace( '%product_cat%', '', $product_base );
         }
-        $product_base = '/' . trim( $product_base, '/' ) . '/';
-        $link = str_replace( $product_base, '/', $permalink );
+        $product_base = trim( $product_base, '/' );
+        // A base of just /%product_cat%/ leaves nothing to remove. Replacing '//' would
+        // turn http:// into http:/ (#91).
+        $link = ( '' === $product_base ? $permalink : str_replace( '/' . $product_base . '/', '/', $permalink ) );
         $link = $this->addPostParentLink( $link, $post, $this->isHierarchical( $this->options['product'] ) );
+        $shopBase = $this->getShopBase();
+        if ( $shopBase ) {
+            $link = home_url( '/' . $shopBase ) . str_replace( home_url(), '', $link );
+        }
         return $link;
     }
 
@@ -123,7 +144,9 @@ class PermalinkListener {
         }
         global $wp_rewrite;
         $feed = '(' . trim( implode( '|', $wp_rewrite->feeds ) ) . ')';
+        $paged = $this->getPaginationBasePattern();
         $customRules = array();
+        $shopBase = $this->getShopBase();
         /**
          * Remove WPML filters while getting terms, to get all languages
          */
@@ -138,25 +161,29 @@ class PermalinkListener {
                 $terms = get_categories( array(
                     'taxonomy'   => $taxonomy,
                     'hide_empty' => false,
+                    'lang'       => '',
                 ) );
                 $hierarchical = $this->isHierarchical( $option );
                 $suffix = false;
                 foreach ( $terms as $term ) {
                     $slug = $this->buildTermPath( $term, $hierarchical, $suffix );
+                    if ( $shopBase ) {
+                        $slug = $shopBase . '/' . $slug;
+                    }
                     $customRules["{$slug}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug;
                     $customRules["{$slug}/embed/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&embed=true';
                     $customRules["{$slug}/{$wp_rewrite->feed_base}/{$feed}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&feed=$matches[1]';
                     $customRules["{$slug}/{$feed}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&feed=$matches[1]';
-                    $customRules["{$slug}/{$wp_rewrite->pagination_base}/?([0-9]{1,})/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&paged=$matches[1]';
+                    $customRules["{$slug}/{$paged}/?([0-9]{1,})/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&paged=$matches[1]';
                     // Polylang compatibility
                     $polylangURLslug = $this->getPolylangLangSlug();
                     if ( $polylangURLslug ) {
                         $slug = $polylangURLslug . $slug;
-                        $customRules["{$slug}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug;
-                        $customRules["{$slug}/embed/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&embed=true';
-                        $customRules["{$slug}/{$wp_rewrite->feed_base}/{$feed}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&feed=$matches[1]';
-                        $customRules["{$slug}/{$feed}/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&feed=$matches[1]';
-                        $customRules["{$slug}/{$wp_rewrite->pagination_base}/?([0-9]{1,})/?\$"] = 'index.php?' . $taxonomy . '=' . $term->slug . '&paged=$matches[1]';
+                        $customRules["{$slug}/?\$"] = 'index.php?lang=$matches[1]&' . $taxonomy . '=' . $term->slug;
+                        $customRules["{$slug}/embed/?\$"] = 'index.php?lang=$matches[1]&' . $taxonomy . '=' . $term->slug . '&embed=true';
+                        $customRules["{$slug}/{$wp_rewrite->feed_base}/{$feed}/?\$"] = 'index.php?lang=$matches[1]&' . $taxonomy . '=' . $term->slug . '&feed=$matches[2]';
+                        $customRules["{$slug}/{$feed}/?\$"] = 'index.php?lang=$matches[1]&' . $taxonomy . '=' . $term->slug . '&feed=$matches[2]';
+                        $customRules["{$slug}/{$paged}/?([0-9]{1,})/?\$"] = 'index.php?lang=$matches[1]&' . $taxonomy . '=' . $term->slug . '&paged=$matches[2]';
                     }
                 }
             }
@@ -209,6 +236,63 @@ class PermalinkListener {
         return false;
     }
 
+    /**
+     * The shop page's path, e.g. "shop", when "Include Shop" is on (#44); otherwise ''.
+     *
+     * @return string
+     */
+    private function getShopBase() {
+        if ( empty( $this->options['include_shop'] ) ) {
+            return '';
+        }
+        $shopPageId = ( function_exists( 'wc_get_page_id' ) ? wc_get_page_id( 'shop' ) : 0 );
+        $path = ( $shopPageId > 0 ? get_page_uri( $shopPageId ) : '' );
+        return ( $path ? urldecode( $path ) : 'shop' );
+    }
+
+    /**
+     * The pagination base in the category rules: "page", or with Polylang Pro's "Translate
+     * slugs" module translating it, every translation as a non-capturing group, e.g.
+     * (?:page|pagina), so /nl/glaswerk/pagina/2/ resolves too. The same pattern Polylang Pro
+     * gives its own rules; being non-capturing, the $matches numbers don't move.
+     *
+     * @return string
+     */
+    private function getPaginationBasePattern() {
+        global $wp_rewrite;
+        $bases = array_unique( array_merge( array($wp_rewrite->pagination_base), $this->getPolylangPaginationBases() ) );
+        if ( 1 === count( $bases ) ) {
+            return $wp_rewrite->pagination_base;
+        }
+        return '(?:' . implode( '|', array_map( function ( $base ) {
+            return preg_quote( $base, '#' );
+        }, $bases ) ) . ')';
+    }
+
+    /**
+     * The pagination base in each language, from Polylang Pro's "Translate slugs" module
+     * ($polylang->translate_slugs->slugs_model->translated_slugs['paged']). Empty without
+     * Polylang Pro, with the module off, or when no language translates "page".
+     *
+     * @return string[]
+     */
+    private function getPolylangPaginationBases() {
+        if ( empty( $this->polyLang->translate_slugs->slugs_model ) ) {
+            return array();
+        }
+        $model = $this->polyLang->translate_slugs->slugs_model;
+        // Polylang Pro fills this on wp_loaded; a flush before then would find it empty.
+        if ( !isset( $model->translated_slugs ) && method_exists( $model, 'init_translated_slugs' ) ) {
+            $model->init_translated_slugs();
+        }
+        if ( empty( $model->translated_slugs['paged']['translations'] ) || !is_array( $model->translated_slugs['paged']['translations'] ) ) {
+            return array();
+        }
+        return array_values( array_filter( $model->translated_slugs['paged']['translations'], function ( $base ) {
+            return is_string( $base ) && '' !== trim( $base, '/' );
+        } ) );
+    }
+
     private function getProductBase() {
         if ( is_null( $this->productBase ) ) {
             $permalinkStructure = wc_get_permalink_structure();
@@ -242,7 +326,17 @@ class PermalinkListener {
         return ( $suffix ? $slug . $suffix : $slug );
     }
 
-    private function getProductCategory( $product ) {
+    /**
+     * The category a product's URL uses, and so its breadcrumbs too: the Yoast SEO primary
+     * category when "use primary category" is on and the product is still in it, otherwise
+     * the category with the highest ID, through WooCommerce's
+     * wc_product_post_type_link_product_cat filter (which Yoast SEO also uses).
+     *
+     * @param WP_Post $product
+     *
+     * @return \WP_Term|null Null when the product has no category.
+     */
+    public function getProductCategory( $product ) {
         $term = null;
         if ( !empty( $this->options['use_primary_category'] ) ) {
             $term = $this->getSeoPrimaryTerm( $product );

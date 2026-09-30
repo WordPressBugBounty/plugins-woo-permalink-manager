@@ -5,7 +5,7 @@ Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
 Tested up to: 7.1
-Stable tag: 2.3.16
+Stable tag: 2.4.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -87,6 +87,18 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.4.0 (30th September 2026) =
+
+* New: "Include Shop" option (premium) adds the shop page's path to category and product URLs
+* Fix: New category and tag URLs work as soon as the settings are saved, instead of 404ing until permalinks were rebuilt
+* Fix: Product breadcrumbs use the same category as the product URL, including the Yoast primary category
+* Fix: Product links no longer break when WooCommerce's product base is /%product_cat%/
+* Fix: With Polylang, category URLs work in every language, whichever language was active when permalinks were rebuilt
+* Fix: Category pagination works under a Polylang language prefix, and with Polylang Pro's translated pagination base
+* Fix: REST API routes that end in a product slug are no longer treated as product pages
+* Fix: Product pages keep query vars passed in the query string
+* Update: Freemius SDK updated to 2.13.4
 
 = 2.3.16 (24th September 2026) =
 

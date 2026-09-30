@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => 'premmerce/woo-permalink-manager',
-        'pretty_version' => '2.3.16',
-        'version' => '2.3.16.0',
-        'reference' => 'c160a9bdc7b95e8e6a6b28ad9591e3841f35b758',
+        'pretty_version' => '2.4.0',
+        'version' => '2.4.0.0',
+        'reference' => '952587e2b9a04d31efa9c9075e650110b0d6c664',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         'premmerce/woo-permalink-manager' => array(
-            'pretty_version' => '2.3.16',
-            'version' => '2.3.16.0',
-            'reference' => 'c160a9bdc7b95e8e6a6b28ad9591e3841f35b758',
+            'pretty_version' => '2.4.0',
+            'version' => '2.4.0.0',
+            'reference' => '952587e2b9a04d31efa9c9075e650110b0d6c664',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
