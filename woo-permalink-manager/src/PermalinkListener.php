@@ -66,11 +66,40 @@ class PermalinkListener {
             3
         );
         add_filter( 'rewrite_rules_array', array($this, 'addRewriteRules'), 99 );
+        add_filter( 'user_trailingslashit', array($this, 'removeSlashAfterSuffix') );
+        add_filter(
+            'premmerce_permalink_manager_pagination_base',
+            array($this, 'translatePaginationBase'),
+            10,
+            2
+        );
         add_action( 'add_option_' . Settings::OPTIONS, array($this, 'loadOptions') );
         add_action( 'update_option_' . Settings::OPTIONS, array($this, 'loadOptions') );
         add_action( 'pll_init', function ( $polylang ) {
             $this->polyLang = $polylang;
         } );
+    }
+
+    /**
+     * No trailing slash after the URL suffix: /beanie.html, not /beanie.html/ (#33). The
+     * links are built without one, but WordPress's canonical redirect passes every path
+     * through user_trailingslashit(), which adds the slash the permalink structure ends in,
+     * so each suffixed URL 301'd to a copy with a slash.
+     *
+     * @param string $url
+     *
+     * @return string
+     */
+    public function removeSlashAfterSuffix( $url ) {
+        $suffix = $this->options['suffix'];
+        if ( !$suffix || !($this->options['enable_suffix_products'] || $this->options['enable_suffix_categories']) ) {
+            return $url;
+        }
+        $withoutSlash = untrailingslashit( $url );
+        if ( substr( $withoutSlash, -strlen( $suffix ) ) === $suffix ) {
+            return $withoutSlash;
+        }
+        return $url;
     }
 
     /**
@@ -277,6 +306,16 @@ class PermalinkListener {
      * @return string[]
      */
     private function getPolylangPaginationBases() {
+        return array_values( $this->getPolylangPaginationTranslations() );
+    }
+
+    /**
+     * The pagination base in each language that translates it, from Polylang Pro's
+     * "Translate slugs" module, keyed by language slug, e.g. [ 'nl' => 'pagina' ].
+     *
+     * @return string[]
+     */
+    private function getPolylangPaginationTranslations() {
         if ( empty( $this->polyLang->translate_slugs->slugs_model ) ) {
             return array();
         }
@@ -288,9 +327,31 @@ class PermalinkListener {
         if ( empty( $model->translated_slugs['paged']['translations'] ) || !is_array( $model->translated_slugs['paged']['translations'] ) ) {
             return array();
         }
-        return array_values( array_filter( $model->translated_slugs['paged']['translations'], function ( $base ) {
+        return array_filter( $model->translated_slugs['paged']['translations'], function ( $base ) {
             return is_string( $base ) && '' !== trim( $base, '/' );
-        } ) );
+        } );
+    }
+
+    /**
+     * The pagination base in a term's paged canonical URL (#100): the translation for the
+     * term's language when Polylang Pro translates "page", e.g. /nl/glaswerk/pagina/2/, the
+     * same base Polylang Pro puts in its pagination links. Otherwise the base unchanged.
+     *
+     * @param string   $base
+     * @param \WP_Term $term
+     *
+     * @return string
+     */
+    public function translatePaginationBase( $base, $term ) {
+        if ( !$term instanceof \WP_Term || empty( $this->polyLang->model->term ) ) {
+            return $base;
+        }
+        $language = $this->polyLang->model->term->get_language( $term->term_id );
+        if ( empty( $language->slug ) ) {
+            return $base;
+        }
+        $translations = $this->getPolylangPaginationTranslations();
+        return ( isset( $translations[$language->slug] ) ? trim( $translations[$language->slug], '/' ) : $base );
     }
 
     private function getProductBase() {

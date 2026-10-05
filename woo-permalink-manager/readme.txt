@@ -5,7 +5,7 @@ Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
 Tested up to: 7.1
-Stable tag: 2.4.0
+Stable tag: 2.4.1
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -87,6 +87,16 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.4.1 (5th October 2026) =
+
+* Fix: A URL that ends in a product's slug no longer loads that product unless it's the product's URL, so pages, posts, other post types and searches with the same slug load as they should. With "Create redirects" (premium) on, old product URLs still 301 to the new one
+* Fix: With a URL suffix such as .html (premium), product and category URLs no longer 301 to a copy with a trailing slash
+* Fix: With a URL suffix, a product's comment feed and review pages load instead of 404ing
+* Fix: With "Create redirects" (premium) on, product and category feeds are no longer redirected to the page
+* Fix: With Polylang Pro translating the pagination base, a category's page 2 and on have a canonical with the translated base, and "Create redirects" no longer sends them to the untranslated one
+* Fix: Saving a product category, tag or the settings no longer empties the whole object cache (Redis, Memcached)
+* Fix: The Premmerce banner only shows to users who can manage the plugin
 
 = 2.4.0 (30th September 2026) =
 

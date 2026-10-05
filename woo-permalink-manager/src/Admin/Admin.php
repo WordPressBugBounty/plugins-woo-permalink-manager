@@ -310,12 +310,15 @@ class Admin
 
     /**
      * Flush rewrite rules
+     *
+     * Without emptying the object cache (#75): on Redis or Memcached that empties it for
+     * every site sharing it. The rules are built from get_categories(), whose cached
+     * queries WordPress already invalidates when a term changes.
      */
     public function flush()
     {
         if (get_option(Settings::OPTION_FLUSH)) {
             flush_rewrite_rules();
-            wp_cache_flush();
             delete_option(Settings::OPTION_FLUSH);
         }
     }
@@ -352,6 +355,11 @@ class Admin
 
     public function isBannerActive()
     {
+        // Only for users who can open the plugin's pages, which need manage_options (#73).
+        if (! current_user_can('manage_options')) {
+            return false;
+        }
+
         $user    = wp_get_current_user();
         $user_id = $user->ID;
 
