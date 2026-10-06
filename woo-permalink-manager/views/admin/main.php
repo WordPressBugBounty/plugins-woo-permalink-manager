@@ -22,7 +22,7 @@ if ( ! defined('WPINC')) {
 				?>
 			<a class="nav-tab premmerce-upgrate-to-premium-button"
 				href="<?php echo esc_url(admin_url('admin.php?page=premmerce-url-manager-admin-pricing')); ?>">
-				<?php esc_html_e('Upgrate to Premium', 'premmerce-url-manager'); ?>
+				<?php esc_html_e('Upgrade to Premium', 'premmerce-url-manager'); ?>
 			</a>
 			<?php
 			endif;

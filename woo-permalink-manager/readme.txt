@@ -5,7 +5,7 @@ Contributors: premmerce, freemius
 Tags: woocommerce url, remove product, remove product_category, woocommerce permalink, woocommerce, woocommerce seo
 Requires at least: 4.8
 Tested up to: 7.1
-Stable tag: 2.4.1
+Stable tag: 2.4.2
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -87,6 +87,11 @@ You can also install this plugin manually:
 == Changelog ==
 
 
+
+= 2.4.2 (6th October 2026) =
+
+* Fix: Saving the plugin's settings no longer resets WooCommerce's product category, tag and attribute bases. If yours were reset, set them again under Settings > Permalinks
+* Fix: A draft, pending or scheduled product's Preview link now works with a URL suffix, "Replace slug with SKU" or "Include Shop" (premium) on
 
 = 2.4.1 (5th October 2026) =
 

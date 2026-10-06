@@ -108,7 +108,7 @@ msgid "WooCommerce Permalink Settings"
 msgstr "Налаштування постійних посилань WooCommerce"
 
 #: views/admin/main.php:24
-msgid "Upgrate to Premium"
+msgid "Upgrade to Premium"
 msgstr ""
 
 #: views/admin/section/additional.php:36

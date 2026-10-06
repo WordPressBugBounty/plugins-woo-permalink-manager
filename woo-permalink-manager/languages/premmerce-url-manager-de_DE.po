@@ -107,7 +107,7 @@ msgid "WooCommerce Permalink Settings"
 msgstr "WooCommerce Permalink-Einstellungen"
 
 #: views/admin/main.php:24
-msgid "Upgrate to Premium"
+msgid "Upgrade to Premium"
 msgstr ""
 
 #: views/admin/section/additional.php:36

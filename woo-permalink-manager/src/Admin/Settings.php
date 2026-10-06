@@ -201,13 +201,25 @@ class Settings
         }
 
         if (isset($options['product']) && !empty($options['product'])) {
+            $productBase = null;
 
             if ('slug' === $options['product']) {
-                $wc['product_base'] = self::PERMALINK_WC_PRODUCT;
+                $productBase = self::PERMALINK_WC_PRODUCT;
             }
             if (in_array($options['product'], array( 'category_slug', 'hierarchical' ))) {
-                $wc['product_base'] = self::PERMALINK_WC_PRODUCT_CAT;
+                $productBase = self::PERMALINK_WC_PRODUCT_CAT;
             }
+
+            if (null === $productBase) {
+                return;
+            }
+
+            // Change only the product base: keep WooCommerce's category, tag and attribute
+            // bases and the rest of the option (#104).
+            $wc = get_option('woocommerce_permalinks', array());
+            $wc = is_array($wc) ? $wc : array();
+
+            $wc['product_base'] = $productBase;
 
             update_option('woocommerce_permalinks', $wc);
         }

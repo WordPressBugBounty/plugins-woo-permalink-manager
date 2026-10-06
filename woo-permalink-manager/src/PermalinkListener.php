@@ -141,6 +141,13 @@ class PermalinkListener {
         if ( !get_option( 'permalink_structure' ) ) {
             return $permalink;
         }
+        // A plain link, ?post_type=product&p=<id>, which WordPress gives drafts, pending and
+        // scheduled products: there's no path to change. The suffix made it /.html?post_type=…,
+        // so a draft's preview link was a 403 or 404 (#26). The SKU replaced the whole query,
+        // and Include Shop put /shop/ in front of it.
+        if ( $this->isPlainLink( $permalink ) ) {
+            return $permalink;
+        }
         if ( empty( $this->options['product'] ) ) {
             return $permalink;
         }
@@ -158,6 +165,19 @@ class PermalinkListener {
             $link = home_url( '/' . $shopBase ) . str_replace( home_url(), '', $link );
         }
         return $link;
+    }
+
+    /**
+     * Whether a product link is WordPress's plain form, ?post_type=product&p=<id> or
+     * ?product=<slug>, rather than a pretty URL with a path.
+     *
+     * @param string $permalink
+     *
+     * @return bool
+     */
+    private function isPlainLink( $permalink ) {
+        parse_str( (string) parse_url( $permalink, PHP_URL_QUERY ), $args );
+        return isset( $args['p'] ) || isset( $args[self::WOO_PRODUCT] );
     }
 
     /**
